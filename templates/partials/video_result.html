@@ -1,0 +1,127 @@
+<!-- 视频信息卡片 -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <!-- 视频信息头部 -->
+    <div class="p-6">
+        <div class="flex gap-4">
+            <!-- 封面图 -->
+            <div class="flex-shrink-0">
+                <img
+                    src="{{ info.cover }}"
+                    alt="视频封面"
+                    class="w-48 h-28 object-cover rounded-lg"
+                    referrerpolicy="no-referrer"
+                >
+            </div>
+            <!-- 视频详情 -->
+            <div class="flex-1 min-w-0">
+                <h3 class="text-lg font-semibold text-gray-900 truncate">{{ info.title }}</h3>
+                <div class="mt-2 flex items-center gap-3 text-sm text-gray-500">
+                    <span class="flex items-center gap-1">
+                        <img src="{{ info.owner_face }}" class="w-5 h-5 rounded-full" referrerpolicy="no-referrer">
+                        {{ info.owner_name }}
+                    </span>
+                    <span>{{ view_str }} 播放</span>
+                    <span>{{ danmaku_str }} 弹幕</span>
+                    <span>{{ duration_str }}</span>
+                </div>
+                {% if info.desc %}
+                <p class="mt-2 text-sm text-gray-600 line-clamp-2">{{ info.desc }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 嵌入播放器 -->
+    <div class="px-6 pb-4">
+        <div class="aspect-video rounded-lg overflow-hidden bg-black">
+            <iframe
+                src="https://player.bilibili.com/player.html?bvid={{ info.bvid }}&page=1&high_quality=1&danmaku=0"
+                class="w-full h-full"
+                frameborder="0"
+                allowfullscreen
+                sandbox="allow-scripts allow-same-origin allow-popups"
+            ></iframe>
+        </div>
+    </div>
+
+    <!-- 字幕区域 -->
+    <div class="border-t border-gray-100 p-6">
+        {% if subtitles %}
+            <!-- 字幕操作栏 -->
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="font-semibold text-gray-800">
+                    字幕内容
+                    <span class="text-sm font-normal text-gray-500 ml-2">
+                        共 {{ subtitles | length }} 个字幕轨道
+                    </span>
+                </h4>
+                <div class="flex gap-2">
+                    {% for track in subtitles %}
+                    <a
+                        href="/api/export/{{ info.bvid }}?fmt=srt&lang={{ track.lang }}"
+                        class="text-xs border border-gray-300 rounded px-2 py-1 hover:bg-gray-50 transition text-gray-600"
+                        download
+                    >
+                        SRT ({{ track.lang_doc }})
+                    </a>
+                    <a
+                        href="/api/export/{{ info.bvid }}?fmt=txt&lang={{ track.lang }}"
+                        class="text-xs border border-gray-300 rounded px-2 py-1 hover:bg-gray-50 transition text-gray-600"
+                        download
+                    >
+                        TXT ({{ track.lang_doc }})
+                    </a>
+                    {% endfor %}
+                    <button
+                        onclick="copySubtitles()"
+                        class="text-xs bg-pink-500 text-white rounded px-3 py-1 hover:bg-pink-600 transition"
+                    >
+                        复制全文
+                    </button>
+                </div>
+            </div>
+
+            <!-- 字幕内容 -->
+            {% for track in subtitles %}
+            <div class="mb-6 last:mb-0">
+                <h5 class="text-sm font-medium text-gray-600 mb-2">{{ track.lang_doc }} ({{ track.lang }})</h5>
+                <div id="subtitle-content-{{ track.lang }}" class="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto space-y-1 text-sm">
+                    {% for item in track.items %}
+                    <div class="flex gap-3 hover:bg-gray-100 rounded px-2 py-0.5 transition">
+                        <span class="text-gray-400 font-mono text-xs flex-shrink-0 pt-0.5 w-16">
+                            {{ "%02d:%02d" | format((item.start // 60) | int, (item.start % 60) | int) }}
+                        </span>
+                        <span class="text-gray-800">{{ item.content }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- 纯文本（隐藏，供复制使用） -->
+            <textarea id="subtitle-plain" class="hidden">{% for track in subtitles %}{% for item in track.items %}{{ item.content }}
+{% endfor %}{% endfor %}</textarea>
+
+            <script>
+                function copySubtitles() {
+                    const text = document.getElementById('subtitle-plain').value.trim();
+                    navigator.clipboard.writeText(text).then(() => {
+                        const btn = event.target;
+                        const original = btn.textContent;
+                        btn.textContent = '已复制！';
+                        btn.classList.replace('bg-pink-500', 'bg-green-500');
+                        setTimeout(() => {
+                            btn.textContent = original;
+                            btn.classList.replace('bg-green-500', 'bg-pink-500');
+                        }, 2000);
+                    });
+                }
+            </script>
+        {% else %}
+            <div class="text-center py-8 text-gray-400">
+                <p class="text-lg mb-1">该视频没有找到字幕</p>
+                <p class="text-sm">可能视频未开启字幕，或需要配置 Cookie 才能获取。</p>
+            </div>
+        {% endif %}
+    </div>
+</div>

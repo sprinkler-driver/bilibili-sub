@@ -1,0 +1,66 @@
+<!-- Cookie 设置表单 -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-4">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="font-semibold text-gray-800">Cookie 设置</h3>
+        <button
+            onclick="this.closest('#settings-area').innerHTML = ''"
+            class="text-gray-400 hover:text-gray-600 text-sm"
+        >
+            关闭
+        </button>
+    </div>
+
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 text-sm text-blue-700">
+        <p class="font-medium mb-1">如何获取 Cookie？</p>
+        <ol class="list-decimal list-inside space-y-0.5 text-xs">
+            <li>打开 <a href="https://www.bilibili.com" target="_blank" class="underline">bilibili.com</a> 并登录</li>
+            <li>按 F12 打开开发者工具</li>
+            <li>进入 Application → Cookies → bilibili.com</li>
+            <li>复制以下三个值填入对应输入框</li>
+        </ol>
+    </div>
+
+    <form
+        hx-post="/api/settings"
+        hx-target="#settings-area"
+        hx-swap="innerHTML"
+        class="space-y-3"
+    >
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">SESSDATA</label>
+            <input
+                type="text"
+                name="sessdata"
+                value="{{ sessdata }}"
+                placeholder="从浏览器 Cookie 中复制"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
+            >
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">bili_jct</label>
+            <input
+                type="text"
+                name="bili_jct"
+                value="{{ bili_jct }}"
+                placeholder="从浏览器 Cookie 中复制"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
+            >
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">buvid3</label>
+            <input
+                type="text"
+                name="buvid3"
+                value="{{ buvid3 }}"
+                placeholder="从浏览器 Cookie 中复制"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
+            >
+        </div>
+        <button
+            type="submit"
+            class="bg-pink-500 hover:bg-pink-600 text-white font-medium rounded-lg px-5 py-2 text-sm transition"
+        >
+            保存
+        </button>
+    </form>
+</div>

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Cookie 未配置提醒 -->
+{% if not has_cookie %}
+<div class="bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg p-4 mb-4">
+    <p class="font-medium">尚未配置 Cookie</p>
+    <p class="text-sm mt-1">
+        获取字幕需要 B站 Cookie 认证。请点击右上角「Cookie 设置」进行配置。
+    </p>
+</div>
+{% endif %}
+
+<!-- URL 输入区域 -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <h2 class="text-lg font-semibold text-gray-800 mb-4">输入视频地址</h2>
+    <form
+        hx-post="/api/parse"
+        hx-target="#result-area"
+        hx-swap="innerHTML"
+        hx-indicator="#loading"
+        class="flex gap-3"
+    >
+        <input
+            type="text"
+            name="url"
+            placeholder="粘贴 B站视频链接，例如 https://www.bilibili.com/video/BV1xxxxxxxxx"
+            required
+            class="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition"
+        >
+        <button
+            type="submit"
+            class="bg-pink-500 hover:bg-pink-600 text-white font-medium rounded-lg px-6 py-2.5 text-sm transition whitespace-nowrap"
+        >
+            提取字幕
+        </button>
+    </form>
+
+    <!-- 加载中提示 -->
+    <div id="loading" class="htmx-indicator mt-4">
+        <div class="flex items-center gap-2 text-gray-500 text-sm">
+            <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            正在解析视频，请稍候...
+        </div>
+    </div>
+</div>
+
+<!-- 结果展示区域 -->
+<div id="result-area" class="mt-6"></div>
+{% endblock %}

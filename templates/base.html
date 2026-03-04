@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B站字幕提取器</title>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 顶部导航 -->
+    <nav class="bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <h1 class="text-xl font-bold text-pink-500">
+                <span class="mr-1">B</span>字幕提取器
+            </h1>
+            <button
+                hx-get="/api/settings"
+                hx-target="#settings-area"
+                hx-swap="innerHTML"
+                class="text-sm text-gray-500 hover:text-gray-700 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition"
+            >
+                Cookie 设置
+            </button>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="max-w-4xl mx-auto px-4 py-6">
+        <!-- 设置区域 -->
+        <div id="settings-area"></div>
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="text-center text-gray-400 text-xs py-6">
+        B站字幕提取器 — 仅供学习用途
+    </footer>
+</body>
+</html>
